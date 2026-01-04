@@ -156,11 +156,12 @@ Format everything clearly with headers so it's ready to copy and paste."""
             print(f"❌ Error fetching Reddit content: {e}")
             return
 
-        # Step 2: Interactive link selection
+        # Step 2: Interactive link selection with confirmation loop
         print("=" * 60)
         selected_topic = None
+        confirmed = False
 
-        while True:
+        while not confirmed:
             print("\n📌 OPTIONS:")
             print("1. Select one of the trending topics above (enter number 1-10)")
             print("2. Provide your own article URL")
@@ -173,11 +174,12 @@ Format everything clearly with headers so it's ready to copy and paste."""
                     topic_num = int(input("\n✅ Enter topic number (1-10): ").strip())
                     if 1 <= topic_num <= len(topics):
                         selected_topic = topics[topic_num - 1]
-                        break
                     else:
                         print(f"❌ Please enter a number between 1 and {len(topics)}")
+                        continue
                 except ValueError:
                     print("❌ Invalid number. Please try again.")
+                    continue
 
             elif choice == "2":
                 url = input("\n✅ Paste your article URL: ").strip()
@@ -190,7 +192,6 @@ Format everything clearly with headers so it's ready to copy and paste."""
                     comment_count=0,
                     retrieved_at=datetime.now()
                 )
-                break
 
             elif choice == "3":
                 print("\n🔄 Fetching fresh viral content...")
@@ -203,15 +204,24 @@ Format everything clearly with headers so it's ready to copy and paste."""
 
             else:
                 print("❌ Invalid choice. Please enter 1, 2, or 3.")
+                continue
 
-        # Step 3: Confirm selection
-        print(f"\n✅ Selected: {selected_topic.title}")
-        print(f"   URL: {selected_topic.url}")
-        confirm = input("\nIs this correct? (yes/no): ").strip().lower()
+            # Step 3: Confirm selection
+            if selected_topic:
+                print(f"\n✅ Selected: {selected_topic.title}")
+                print(f"   URL: {selected_topic.url}")
+                confirm = input("\nIs this correct? (yes/no): ").strip().lower()
 
-        if confirm not in ['yes', 'y']:
-            print("❌ Operation cancelled. Please run the script again.")
-            return
+                if confirm in ['yes', 'y']:
+                    confirmed = True
+                else:
+                    print("\n🔄 No problem! Let's choose a different topic.\n")
+                    selected_topic = None
+                    # Show topics again for convenience
+                    print("📊 TOP VIRAL CONTENT FROM REDDIT:\n")
+                    for i, topic in enumerate(topics, 1):
+                        print(f"{i}. {topic}")
+                        print()
 
         # Step 4: Analyze the content
         article_summary = self.analyze_article_with_ai(
