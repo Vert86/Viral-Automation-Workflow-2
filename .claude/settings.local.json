@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Viral Content Automation Tool\n\n- Add viral content scraper with AI-powered analysis\n- Add interactive link selection workflow\n- Add YouTube video prompt generator\n- Add SEO optimization for titles, descriptions, and tags\n- Add auto-save functionality for generated content\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(pip install:*)"
     ]
   }
 }

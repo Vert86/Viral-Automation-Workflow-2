@@ -4,12 +4,14 @@ Automate the process of finding viral social media content, analyzing trending t
 
 ## Features
 
-- **Automated Viral Content Discovery**: Searches the web for current trending topics and viral social media content
-- **Interactive Link Selection**: Choose from suggested articles or provide your own
-- **AI-Powered Analysis**: Analyzes articles to extract key viral elements
+- **Reddit-Based Viral Content Discovery**: Fetches real-time trending topics from Reddit (r/all, r/news, r/trending, etc.)
+- **Smart Filtering**: Only shows posts with high scores and engagement
+- **Interactive Selection**: Choose from top 10 trending topics or provide your own URL
+- **AI-Powered Analysis**: Uses Claude AI to analyze viral content and extract key elements
 - **Complete Video Package Generation**: Creates ready-to-use prompts for AI video creators
 - **SEO Optimization**: Generates titles, descriptions, and tags optimized for YouTube
 - **Auto-Save Results**: Saves all generated content to timestamped files
+- **No Authentication Required**: Uses Reddit's public API (no API key needed)
 
 ## Prerequisites
 
@@ -69,17 +71,20 @@ python viral_content_automation.py
 
 ### Workflow
 
-1. **Search Phase**: The tool automatically searches for current viral content and trending topics
-2. **Selection Phase**: You'll see 3 article options and can:
-   - Choose one of the suggested articles
+1. **Fetch Phase**: The tool fetches the top 10 viral posts from Reddit with:
+   - High scores (1000+ upvotes)
+   - Active engagement (comments)
+   - External article links
+2. **Selection Phase**: You'll see the top trending topics and can:
+   - Select one by number (1-10)
    - Provide your own article URL
-   - Search for different viral content
-3. **Confirmation**: Confirm the URL you want to use
-4. **Analysis Phase**: The tool analyzes the article content
+   - Refresh to fetch new viral content
+3. **Confirmation**: Confirm your selected topic
+4. **Analysis Phase**: Claude AI analyzes the content for viral elements
 5. **Generation Phase**: Creates a complete YouTube video package including:
-   - AI text-to-video prompt
+   - AI text-to-video prompt (30-60 seconds)
    - SEO-optimized title
-   - YouTube description with hashtags
+   - YouTube description with emojis and hashtags
    - 20-25 relevant tags
 6. **Save**: Results are displayed and saved to a timestamped file
 
@@ -123,8 +128,14 @@ YOUTUBE TAGS
 ```
 ViralAutomation/
 ├── viral_content_automation.py    # Main automation script
+├── automation/
+│   ├── __init__.py               # Package initializer
+│   ├── models.py                 # Data models for trending topics
+│   ├── config.py                 # Reddit API configuration
+│   └── reddit_client.py          # Reddit API client
 ├── requirements.txt               # Python dependencies
 ├── README.md                      # This file
+├── .env.example                  # Example environment file
 ├── .gitignore                    # Git ignore rules
 └── video_package_*.txt           # Generated output files (auto-created)
 ```
@@ -139,9 +150,10 @@ ViralAutomation/
 - Run `pip install -r requirements.txt` to install dependencies
 - Make sure you're using Python 3.7 or higher
 
-**Web search not working**
+**Reddit fetch not working**
 - Ensure you have an active internet connection
-- Check that your API key has sufficient credits
+- Reddit's API may have rate limits - wait a minute and try again
+- Check that requests and tenacity are properly installed
 
 ## Contributing
 
