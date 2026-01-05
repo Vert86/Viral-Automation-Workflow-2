@@ -88,12 +88,14 @@ Keep it concise (3-4 paragraphs)."""
         """Generate AI video creation prompt and YouTube metadata"""
         print("\n🎬 Generating video creation materials...\n")
 
+        article_info = f"Article: {topic.article_url} ({topic.article_source})" if topic.article_url else f"URL: {topic.url}"
+
         prompt = f"""Based on this viral content:
 
 Title: {topic.title}
-URL: {topic.url}
+{article_info}
 Reddit Score: {topic.score:,}
-Comments: {topic.comment_count:,}
+Reddit Comments: {topic.comment_count:,}
 
 Content Analysis:
 {article_summary}
@@ -209,7 +211,11 @@ Format everything clearly with headers so it's ready to copy and paste."""
             # Step 3: Confirm selection
             if selected_topic:
                 print(f"\n✅ Selected: {selected_topic.title}")
-                print(f"   URL: {selected_topic.url}")
+                if selected_topic.article_url:
+                    print(f"   📰 Article ({selected_topic.article_source}): {selected_topic.article_url}")
+                    print(f"   💬 Reddit Discussion: {selected_topic.url}")
+                else:
+                    print(f"   🔗 URL: {selected_topic.url}")
                 confirm = input("\nIs this correct? (yes/no): ").strip().lower()
 
                 if confirm in ['yes', 'y']:
@@ -224,8 +230,10 @@ Format everything clearly with headers so it's ready to copy and paste."""
                         print()
 
         # Step 4: Analyze the content
+        # Use article_url if available, otherwise fall back to url
+        analysis_url = selected_topic.article_url if selected_topic.article_url else selected_topic.url
         article_summary = self.analyze_article_with_ai(
-            selected_topic.url,
+            analysis_url,
             selected_topic.title
         )
         print(article_summary)
@@ -247,7 +255,10 @@ Format everything clearly with headers so it's ready to copy and paste."""
             f.write("YOUTUBE VIDEO CREATION PACKAGE\n")
             f.write(f"Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}\n")
             f.write(f"Topic: {selected_topic.title}\n")
-            f.write(f"URL: {selected_topic.url}\n")
+            if selected_topic.article_url:
+                f.write(f"Article URL: {selected_topic.article_url}\n")
+                f.write(f"Article Source: {selected_topic.article_source}\n")
+            f.write(f"Reddit Discussion: {selected_topic.url}\n")
             f.write(f"Reddit Score: {selected_topic.score:,}\n")
             f.write(f"Comments: {selected_topic.comment_count:,}\n")
             f.write("=" * 60 + "\n\n")

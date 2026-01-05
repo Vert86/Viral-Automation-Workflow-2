@@ -4,7 +4,12 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Viral Content Automation Tool\n\n- Add viral content scraper with AI-powered analysis\n- Add interactive link selection workflow\n- Add YouTube video prompt generator\n- Add SEO optimization for titles, descriptions, and tags\n- Add auto-save functionality for generated content\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate: Switch from web search to Reddit API for viral content\n\n- Replace Claude web search with Reddit API client\n- Add automation package with models, config, and Reddit client\n- Fetch trending content from r/all, r/news, r/trending\n- Filter posts by score \\(1000+\\) and engagement\n- Add interactive selection for top 10 trending topics\n- Update documentation with Reddit-based workflow\n- Add .env.example for API key configuration\n- Update requirements with requests and tenacity\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)"
     ]
   }
 }

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
+from urllib.parse import urlparse
+import re
 
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -15,13 +17,62 @@ from automation.models import TrendingTopic
 class RedditClient:
     """Client for fetching trending topics from Reddit"""
 
+    # Known news domains that are acceptable article sources
+    NEWS_DOMAINS = {
+        'bbc.com', 'bbc.co.uk', 'cnn.com', 'nytimes.com', 'theguardian.com',
+        'reuters.com', 'apnews.com', 'bloomberg.com', 'cnbc.com', 'forbes.com',
+        'wsj.com', 'washingtonpost.com', 'npr.org', 'abcnews.go.com', 'cbsnews.com',
+        'nbcnews.com', 'usatoday.com', 'latimes.com', 'time.com', 'newsweek.com',
+        'theverge.com', 'techcrunch.com', 'arstechnica.com', 'wired.com', 'vice.com',
+        'vox.com', 'axios.com', 'politico.com', 'thehill.com', 'huffpost.com',
+        'businessinsider.com', 'space.com', 'scientificamerican.com', 'nature.com',
+        'nationalgeographic.com', 'espn.com', 'skysports.com', 'variety.com',
+        'hollywoodreporter.com', 'rollingstone.com', 'pitchfork.com'
+    }
+
     def __init__(self, config: RedditConfig) -> None:
         self._config = config
+
+    def _is_news_article(self, url: str) -> bool:
+        """Check if URL is from a known news source"""
+        try:
+            domain = urlparse(url).netloc.lower()
+            # Remove www. prefix
+            domain = domain.replace('www.', '')
+            return any(news_domain in domain for news_domain in self.NEWS_DOMAINS)
+        except Exception:
+            return False
+
+    def _extract_source_name(self, url: str) -> str:
+        """Extract readable source name from URL"""
+        try:
+            domain = urlparse(url).netloc.lower().replace('www.', '')
+            # Map common domains to readable names
+            name_map = {
+                'nytimes.com': 'New York Times',
+                'washingtonpost.com': 'Washington Post',
+                'bbc.com': 'BBC',
+                'bbc.co.uk': 'BBC',
+                'cnn.com': 'CNN',
+                'reuters.com': 'Reuters',
+                'apnews.com': 'AP News',
+                'bloomberg.com': 'Bloomberg',
+                'theguardian.com': 'The Guardian',
+                'wsj.com': 'Wall Street Journal',
+                'forbes.com': 'Forbes',
+                'cnbc.com': 'CNBC',
+                'npr.org': 'NPR',
+                'space.com': 'Space.com',
+            }
+            return name_map.get(domain, domain.split('.')[0].title())
+        except Exception:
+            return "Unknown"
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, max=10))
     def fetch_hot_topics(self) -> List[TrendingTopic]:
         """
         Fetch hot/trending topics from Reddit
+        Only includes posts that link to news articles from known sources
 
         Returns:
             List of TrendingTopic objects sorted by score
@@ -48,20 +99,31 @@ class RedditClient:
             if data.get("score", 0) < self._config.minimum_score:
                 continue
 
-            # Skip if it's a self post without external URL
+            # Get the URL from the post
             url = data.get("url", "")
+
+            # Skip if it's a self post without external URL
             if not url or url.startswith("https://www.reddit.com/r/"):
                 continue
+
+            # IMPORTANT: Only include posts that link to news articles
+            if not self._is_news_article(url):
+                continue
+
+            # Extract source name for display
+            source_name = self._extract_source_name(url)
 
             topic = TrendingTopic(
                 id=data.get("id", ""),
                 title=data.get("title", "Untitled"),
-                url=url,
+                url=f"https://www.reddit.com{data.get('permalink', '')}",  # Reddit discussion link
                 score=int(data.get("score", 0)),
                 comment_count=int(data.get("num_comments", 0)),
                 retrieved_at=now,
                 subreddit=data.get("subreddit", ""),
-                author=data.get("author", "")
+                author=data.get("author", ""),
+                article_url=url,  # The actual news article
+                article_source=source_name
             )
             topics.append(topic)
 
