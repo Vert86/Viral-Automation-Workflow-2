@@ -21,20 +21,47 @@ class RedditConfig:
 
 
 # Predefined configs for different content types
-VIRAL_NEWS_CONFIG = RedditConfig(
-    subreddits=["worldnews", "news", "upliftingnews"],
-    limit=25,
+
+# Entertainment, lifestyle, and non-political content
+VIRAL_ENTERTAINMENT_CONFIG = RedditConfig(
+    subreddits=["entertainment", "movies", "television", "Music", "popculture"],
+    limit=30,
     minimum_score=500
 )
 
-VIRAL_TRENDING_CONFIG = RedditConfig(
-    subreddits=["trending", "TikTokCringe", "videos", "interesting"],
-    limit=25,
-    minimum_score=300
+VIRAL_FOOD_CONFIG = RedditConfig(
+    subreddits=["food", "FoodPorn", "Cooking", "recipes", "EatCheapAndHealthy"],
+    limit=30,
+    minimum_score=500
 )
 
+VIRAL_GAMING_CONFIG = RedditConfig(
+    subreddits=["gaming", "Games", "pcgaming", "PS5", "xbox"],
+    limit=30,
+    minimum_score=500
+)
+
+VIRAL_LIFESTYLE_CONFIG = RedditConfig(
+    subreddits=["BeautyGuruChatter", "MakeupAddiction", "SkincareAddiction", "fashion", "streetwear"],
+    limit=30,
+    minimum_score=500
+)
+
+VIRAL_HOBBIES_CONFIG = RedditConfig(
+    subreddits=["DIY", "crafts", "Art", "photography", "gardening"],
+    limit=30,
+    minimum_score=500
+)
+
+VIRAL_SPORTS_CONFIG = RedditConfig(
+    subreddits=["sports", "nba", "nfl", "soccer", "fitness"],
+    limit=30,
+    minimum_score=500
+)
+
+# Combined non-political viral content
 VIRAL_ALL_CONFIG = RedditConfig(
-    subreddits=["all"],
+    subreddits=["videos", "gifs", "Damnthatsinteresting", "interestingasfuck", "oddlysatisfying", "nextfuckinglevel"],
     limit=50,
     minimum_score=1000
 )

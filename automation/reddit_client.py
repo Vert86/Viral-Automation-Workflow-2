@@ -27,11 +27,30 @@ class RedditClient:
         'vox.com', 'axios.com', 'politico.com', 'thehill.com', 'huffpost.com',
         'businessinsider.com', 'space.com', 'scientificamerican.com', 'nature.com',
         'nationalgeographic.com', 'espn.com', 'skysports.com', 'variety.com',
-        'hollywoodreporter.com', 'rollingstone.com', 'pitchfork.com'
+        'hollywoodreporter.com', 'rollingstone.com', 'pitchfork.com', 'ign.com',
+        'gamespot.com', 'polygon.com', 'kotaku.com', 'pcgamer.com', 'ew.com',
+        'billboard.com', 'allrecipes.com', 'seriouseats.com', 'bonappetit.com',
+        'epicurious.com', 'eater.com', 'cosmopolitan.com', 'vogue.com', 'gq.com',
+        'menshealth.com', 'womenshealthmag.com', 'shape.com', 'allure.com'
+    }
+
+    # Political keywords to filter out
+    POLITICAL_KEYWORDS = {
+        'trump', 'biden', 'congress', 'senate', 'election', 'vote', 'political',
+        'politics', 'president', 'republican', 'democrat', 'campaign', 'maduro',
+        'venezuela', 'war', 'military', 'government', 'parliament', 'minister',
+        'policy', 'legislation', 'bill', 'law', 'supreme court', 'justice',
+        'immigration', 'border', 'tariff', 'sanction', 'diplomat', 'putin',
+        'ukraine', 'gaza', 'israel', 'china', 'taiwan', 'embassy', 'treaty'
     }
 
     def __init__(self, config: RedditConfig) -> None:
         self._config = config
+
+    def _contains_political_content(self, title: str) -> bool:
+        """Check if title contains political keywords"""
+        title_lower = title.lower()
+        return any(keyword in title_lower for keyword in self.POLITICAL_KEYWORDS)
 
     def _is_news_article(self, url: str) -> bool:
         """Check if URL is from a known news source"""
@@ -99,6 +118,13 @@ class RedditClient:
             if data.get("score", 0) < self._config.minimum_score:
                 continue
 
+            # Get title and check for political content
+            title = data.get("title", "Untitled")
+
+            # FILTER OUT POLITICAL CONTENT
+            if self._contains_political_content(title):
+                continue
+
             # Get the URL from the post
             url = data.get("url", "")
 
@@ -115,7 +141,7 @@ class RedditClient:
 
             topic = TrendingTopic(
                 id=data.get("id", ""),
-                title=data.get("title", "Untitled"),
+                title=title,
                 url=f"https://www.reddit.com{data.get('permalink', '')}",  # Reddit discussion link
                 score=int(data.get("score", 0)),
                 comment_count=int(data.get("num_comments", 0)),

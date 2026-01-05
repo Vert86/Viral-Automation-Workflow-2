@@ -11,7 +11,15 @@ from pathlib import Path
 from typing import List
 
 from automation.reddit_client import RedditClient
-from automation.config import VIRAL_ALL_CONFIG, VIRAL_NEWS_CONFIG, VIRAL_TRENDING_CONFIG
+from automation.config import (
+    VIRAL_ALL_CONFIG,
+    VIRAL_ENTERTAINMENT_CONFIG,
+    VIRAL_FOOD_CONFIG,
+    VIRAL_GAMING_CONFIG,
+    VIRAL_LIFESTYLE_CONFIG,
+    VIRAL_HOBBIES_CONFIG,
+    VIRAL_SPORTS_CONFIG
+)
 from automation.models import TrendingTopic
 
 
@@ -43,15 +51,20 @@ class ViralContentAutomation:
                         os.environ[key.strip()] = value.strip()
 
     def fetch_viral_content_from_reddit(self) -> List[TrendingTopic]:
-        """Fetch viral content from Reddit"""
-        print("\n🔍 Fetching viral content from Reddit...\n")
+        """Fetch viral content from Reddit - Entertainment & Lifestyle Focus"""
+        print("\n🔍 Fetching viral entertainment & lifestyle content from Reddit...\n")
+        print("📂 Categories: Entertainment, Food, Gaming, Beauty, Hobbies, Sports\n")
 
-        # Fetch from multiple sources
+        # Fetch from entertainment-focused sources (NO politics/news)
         reddit_client = RedditClient(VIRAL_ALL_CONFIG)
         topics = reddit_client.fetch_multiple_sources([
-            VIRAL_ALL_CONFIG,
-            VIRAL_NEWS_CONFIG,
-            VIRAL_TRENDING_CONFIG
+            VIRAL_ENTERTAINMENT_CONFIG,
+            VIRAL_FOOD_CONFIG,
+            VIRAL_GAMING_CONFIG,
+            VIRAL_LIFESTYLE_CONFIG,
+            VIRAL_HOBBIES_CONFIG,
+            VIRAL_SPORTS_CONFIG,
+            VIRAL_ALL_CONFIG
         ])
 
         return topics[:10]  # Return top 10
